@@ -5,11 +5,11 @@ A toolkit for validating and optimizing molecular geometries using
 differentiable loss functions implemented in PyTorch.
 """
 
-from .bond_angle_loss import bond_angle_loss
-from .bond_length_loss import bond_length_loss
-from .aromatic_ring_planarity_loss import ring_planarity_loss
-from .steric_clash_loss import steric_clash_loss
-from .chirality_loss import chirality_loss
+from .loss.bond_angle_loss import bond_angle_loss
+from .loss.bond_length_loss import bond_length_loss
+from .loss.aromatic_ring_planarity_loss import ring_planarity_loss
+from .loss.steric_clash_loss import steric_clash_loss
+from .loss.chirality_loss import chirality_loss
 from .total_loss import total_loss
 
 __all__ = [

@@ -1,9 +1,9 @@
 import torch
-from .bond_length_loss import bond_length_loss
-from .bond_angle_loss import bond_angle_loss
-from .aromatic_ring_planarity_loss import ring_planarity_loss
-from .steric_clash_loss import steric_clash_loss
-from .chirality_loss import chirality_loss
+from .loss.bond_length_loss import bond_length_loss
+from .loss.bond_angle_loss import bond_angle_loss
+from .loss.aromatic_ring_planarity_loss import ring_planarity_loss
+from .loss.steric_clash_loss import steric_clash_loss
+from .loss.chirality_loss import chirality_loss
 
 def total_loss(positions, bonds, angles, rings, vdw_radii, chiral_centers):
     """
