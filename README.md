@@ -1,10 +1,3 @@
-# PoseBusters: Differentiable Molecular Geometry Validation
-
-PoseBusters is a toolkit for validating and optimizing molecular geometries using differentiable loss functions. It implements various physical and chemical constraints as differentiable PyTorch functions that can be used to guide molecular pose optimization.
-
-## Overview
-
-This library provides loss functions that penalize physically or chemically implausible molecular conformations. These functions can be combined into a total loss that guides optimization toward physically realistic structures.
 
 ## Loss Components
 
