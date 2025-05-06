@@ -69,6 +69,3 @@ For a chiral center with neighbors a,b,c,d:
 - PyTorch
 - NumPy (for certain utility functions)
 
-## Examples
-
-See the examples directory for sample uses in different molecular modeling contexts.
