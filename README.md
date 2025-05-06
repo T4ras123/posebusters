@@ -36,28 +36,6 @@ Enforces correct tetrahedral stereochemistry at chiral centers.
 Loss = ReLU(-volume)  # Penalizes incorrect handedness
 ```
 
-## Usage
-
-```python
-import torch
-from posebusters.total_loss import total_loss
-
-# Set up your molecular structure data
-positions = torch.tensor([...])  # [num_atoms, 3]
-bonds = {...}  # Bond information
-angles = {...}  # Angle information
-rings = torch.tensor([...])  # Ring atom indices
-vdw_radii = torch.tensor([...])  # Van der Waals radii
-chiral_centers = [(center_idx, [a, b, c, d]), ...]  # Chiral centers
-
-# Calculate total loss
-loss = total_loss(positions, bonds, angles, rings, vdw_radii, chiral_centers)
-
-# Use for optimization
-loss.backward()
-optimizer.step()
-```
-
 ## Mathematical Foundation
 
 ### Bond Length Loss
