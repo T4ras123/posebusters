@@ -1,41 +1,38 @@
 import torch
 
-def steric_clash_loss(positions, vdw_radii, threshold=0.75):
+def steric_clash_loss(positions, vdw_radii, bond_indices=None, threshold=0.75):
     """
-    Calculate loss for steric clashes (overlapping atoms).
+    Calculate loss for steric clashes (overlapping atoms), *excluding* bonded pairs.
     
     Args:
-        positions: [num_atoms, 3] tensor of atomic coordinates
-        vdw_radii: [num_atoms] tensor of van der Waals radii
-        threshold: Scaling factor for sum of radii (default: 0.75)
-                   Lower values allow more overlap before penalizing
+        positions: [N,3] tensor
+        vdw_radii: [N] tensor
+        bond_indices: optional [num_bonds,2] tensor to mask out bonded pairs
+        threshold: float
         
     Returns:
-        Scalar tensor with sum of squared clash penalties
-        
-    Math:
-        For each pair of atoms i and j:
-        1. Calculate pairwise distances between all atoms
-        2. Determine minimum allowed distance as threshold × (r_i + r_j)
-        3. Compute clash score as ReLU(min_distance - actual_distance)
-        4. Square and sum all positive clash scores
+        sum of squared clash penalties over nonbonded atom pairs
     """
-    # Calculate pairwise distances between all atoms
-    dist_matrix = torch.cdist(positions, positions)  # [num_atoms, num_atoms]
+    # pairwise distances
+    dist = torch.cdist(positions, positions)          # [N,N]
+    N = positions.size(0)
+    # mask self
+    eye = torch.eye(N, dtype=torch.bool, device=positions.device)
     
-    # Create a mask to exclude self-interactions
-    mask = torch.eye(len(positions), dtype=torch.bool, device=positions.device)
+    # min allowed distance
+    sum_vdw = vdw_radii.unsqueeze(0) + vdw_radii.unsqueeze(1)
+    min_allowed = threshold * sum_vdw
     
-    # Calculate minimum allowed distances (threshold × sum of vdW radii)
-    sum_vdw = vdw_radii.unsqueeze(0) + vdw_radii.unsqueeze(1)  # [num_atoms, num_atoms]
-    min_allowed_dist = threshold * sum_vdw
+    # raw clash
+    clash = torch.relu(min_allowed - dist)
     
-    # Calculate clash scores: positive when atoms are too close
-    # ReLU ensures only overlapping atoms contribute to the loss
-    clash_scores = torch.relu(min_allowed_dist - dist_matrix)
+    # exclude self
+    clash = clash.masked_fill(eye, 0.0)
     
-    # Apply mask to exclude self-interactions
-    clash_scores = clash_scores * (~mask)
+    # exclude bonded pairs
+    if bond_indices is not None:
+        b0, b1 = bond_indices[:,0], bond_indices[:,1]
+        clash[b0, b1] = 0
+        clash[b1, b0] = 0
     
-    # Return sum of squared clash scores
-    return torch.sum(clash_scores ** 2)
+    return torch.sum(clash**2)
